@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Bulk Upload Steam Achievement Images
-// @namespace    http://tampermonkey.net/
+// @namespace    https://starcove.studio/
 // @version      2024-12-06
 // @description  Attempts to bulk upload steam achievement images
-// @author       You
+// @author       StarCove Studio
 // @match        https://partner.steamgames.com/apps/achievements/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=steamgames.com
 // @grant        GM_xmlhttpRequest
