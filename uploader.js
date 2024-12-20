@@ -11,9 +11,17 @@
 
 /*
 run 
-python3 -m http.server 8080
-In the directory with all the achievement icons (maybe do one dir up and prepend Achieved/Unachieved)
+`python3 -m http.server 8080`
+In the directory with all the achievement icons
 */
+
+const ICON_TYPE_ACHIEVED = 'achieved';
+const ICON_TYPE_UNACHIEVED = 'unachieved';
+
+const ACHIEVED_ICON_PREFIX = '';
+const UNACHIEVED_ICON_PREFIX = 'LOCKED_';
+
+const FILE_SERVER_PORT = 8080;
 
 const waitForElm = (selector) => {
     return new Promise(resolve => {
@@ -38,11 +46,10 @@ const waitForElm = (selector) => {
     });
 };
 
-const tryUploadIcon = async (achId, rowId, iconType = 'Achieved') => {
-    console.log(iconType);
+const tryUploadIcon = async (achId, rowId, iconType = ICON_TYPE_ACHIEVED) => {
     // which TD in the TR has the correct file input for achieved/unachieved
-    const tdIndex = iconType === 'Achieved' ? 5 : 6;
-    const fileName = iconType === 'Achieved' ? `${achId}.PNG` : `LOCKED_${achId}.PNG`;
+    const tdIndex = iconType === ICON_TYPE_ACHIEVED ? 5 : 6;
+    const fileName = iconType === ICON_TYPE_ACHIEVED ? `${ACHIEVED_ICON_PREFIX}${achId}.PNG` : `${UNACHIEVED_ICON_PREFIX}${achId}.PNG`;
 
     const iconUploadForm = await waitForElm(`#${rowId} > td:nth-child(${tdIndex}) > form`);
     const iconFileInput = iconUploadForm.querySelector('input[type=file]');
@@ -55,7 +62,7 @@ const tryUploadIcon = async (achId, rowId, iconType = 'Achieved') => {
     try {
         const result = await GM.xmlHttpRequest({
             method: 'GET',
-            url: `http://localhost:8080/${iconType}/${fileName}`,
+            url: `http://localhost:${FILE_SERVER_PORT}/${iconType}/${fileName}`,
             responseType: 'blob',
         });
 
@@ -86,8 +93,8 @@ const startBulkUpload = async () => {
         const editButton = tr.querySelector('input[type="submit"][value="Edit"]');
         editButton.click();
 
-        await tryUploadIcon(achId, tr.id, 'Achieved');
-        await tryUploadIcon(achId, tr.id, 'Unachieved');
+        await tryUploadIcon(achId, tr.id, ICON_TYPE_ACHIEVED);
+        await tryUploadIcon(achId, tr.id, ICON_TYPE_UNACHIEVED);
 
         const saveButton = tr.querySelector('input[value="Save"]');
         saveButton.click();
